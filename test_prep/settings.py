@@ -10,7 +10,7 @@ SECRET_KEY = ('DJANGO_SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True  # Set this to False for production
 
-ALLOWED_HOSTS = ['*', 'cloudpractitioner.us-east-2.elasticbeanstalk.com']
+ALLOWED_HOSTS = ['*'] # Change your allowed hosts in a prod environment
 
 # Application definition
 INSTALLED_APPS = [
