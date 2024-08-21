@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AWS Cloud Practitioner Exam Prep</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="apple-touch-icon" sizes="180x180" href="{% static 'images/apple-touch-icon.png' %}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'images/favicon-32x32.png' %}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'images/favicon-16x16.png' %}">
+    <link rel="manifest" href="{% static 'images/site.webmanifest' %}">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"></script>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <script src="{% static 'js/script.js' %}" defer></script>
+</head>
+<body>
+    <canvas id="background-canvas"></canvas>
+    
+    <header>
+        <div class="container">
+            <h1>AWS Cloud Practitioner (CLF-C02) Prep Exams</h1>
+        </div>
+        <button class="theme-toggle" onclick="toggleTheme()">🌓</button>
+    </header>
+    <div class="container">
+        <div id="landing">
+            <div class="card">
+                
+                <p>Practice with the following <strong>23</strong> exam question dumps.</p>
+
+            </div>
+            
+            <h2 style="margin-top:20px;  backdrop-filter: blur(2px);">Select Exam: </h2>
+            <div class="custom-dropdown">
+
+                <select id="examSelector">
+                    <!-- Exam options will be dynamically added here -->
+                </select>
+            </div>
+
+
+            <button onclick="startExam()">Start</button>
+        </div>
+
+        <div id="exam" style="display: none;">
+            <div class="exam-layout">
+                <div class="question-container">
+                    <div id="timer">Time left: 90:00</div>
+                    <div id="currentQuestion"></div>
+                </div>
+                <div class="side-navigation">
+                    <button onclick="submitExam()">Submit Exam</button>
+                    <button onclick="returnToMenu()">Return to Main Menu</button>
+                    
+                </div>
+            </div>
+        </div>
+
+        <div id="results" style="display: none;">
+            <h2 style="font-size: 2.5rem;">Exam Results</h2>
+            <div id="score"></div>
+            
+            <div class="filter-buttons">
+                <button onclick="filterQuestions('all')" class="active">All Questions</button>
+                <button onclick="filterQuestions('correct')">Correct Answers</button>
+                <button onclick="filterQuestions('incorrect')">Incorrect Answers</button>
+                <button onclick="returnToMenu()">Return to Main Menu</button>
+            </div>
+            <div id="reviewQuestions"></div>
+
+        </div>
+
+    </div>
+    
+
+
+    <div id="customPopup" class="popup" style="display: none;">
+        <div class="popup-content">
+            <p id="popupMessage"></p>
+            <button onclick="closePopup()">OK</button>
+        </div>
+    </div>
+    <footer>
+        <div class="footer-credits">
+            <p>Made with ☕ by <a href="https://github.com/ancient-cthulhu" target="_blank" >ancient-cthulhu</a></p>
+            <p>LinkedIn 🌎 <a href="https://www.linkedin.com/in/dgmarquez/" target="_blank" >Daniel Marquez</a></p>
+        </div>
+    </footer>
+    <div id="blur-overlay"></div>
+ 
+    
+</body>
+</html>
