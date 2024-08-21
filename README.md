@@ -75,22 +75,6 @@ python manage.py runserver
 4. Submit the exam when finished or when time runs out
 5. Review your results, including correct and incorrect answers with explanations
 
-## Project Structure
-aws-cloud-practitioner-prep/
-├── test_prep/
-│   ├── static/
-│   │   ├── css/
-│   │   │   └── styles.css
-│   │   ├── js/
-│   │   │   └── script.js
-│   │   └── images/
-│   ├── templates/
-│   │   └── index.html
-│   ├── views.py
-│   ├── urls.py
-│   └── models.py
-├── manage.py
-└── requirements.txt
 
 ## Key Components
 
