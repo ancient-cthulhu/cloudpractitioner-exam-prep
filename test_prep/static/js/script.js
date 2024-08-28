@@ -3,13 +3,14 @@ let timer = null;
 let userAnswers = {};  
 let currentQuestionIndex = 0;
 let selectedExam = null;
-let feedbackSetting = 'immediate';
+let examMode = 'real'; 
 let currentQuestionConfirmed = false;
 let examStartTime = null;
 
 function toggleTheme() {
     document.documentElement.classList.toggle('dark');
 }
+
 
 function fetchExams() {
     console.log('Fetching exams...');
@@ -30,7 +31,7 @@ function fetchExams() {
     });
 }
 
-function startExam() {
+function startExam(mode) {
     const examSelector = document.getElementById('examSelector');
     if (examSelector) {
         selectedExam = examSelector.value;
@@ -40,6 +41,9 @@ function startExam() {
         showPopup('Please select an exam first.');
         return;
     }
+    
+    examMode = mode; // Store the exam mode
+    
     const examUrl = `/api/exams/${encodeURIComponent(selectedExam)}`;
     
     fetch(examUrl)
@@ -120,19 +124,26 @@ function updateSelectedExam() {
 }
 
 function showExamScreen() {
-    console.log('Showing exam screen');
-    const landingElement = document.getElementById('landing');
-    const examElement = document.getElementById('exam');
-    const resultsElement = document.getElementById('results');
-    const blurOverlay = document.getElementById('blur-overlay');
-
-    if (landingElement) landingElement.style.display = 'none';
-    if (examElement) examElement.style.display = 'flex';
-    if (resultsElement) resultsElement.style.display = 'none';
-    if (blurOverlay) blurOverlay.style.display = 'block';
+    if (!isMobile()) {
+        document.getElementById('blur-overlay').style.display = 'block';
+    }
+    document.getElementById('landing').style.display = 'none';
+    document.getElementById('exam').style.display = 'flex';
+    document.getElementById('results').style.display = 'none';
+    document.getElementById('blur-overlay').style.display = 'block';
 
     renderCurrentQuestion();
+    updateNavigationButtons(); 
     startTimer();
+}
+
+function returnToMenu() {
+    document.getElementById('landing').style.display = 'flex';
+    document.getElementById('exam').style.display = 'none';
+    document.getElementById('results').style.display = 'none';
+    document.getElementById('blur-overlay').style.display = 'none';
+
+    resetExam();
 }
 
 function renderCurrentQuestion() {
@@ -157,6 +168,13 @@ function renderCurrentQuestion() {
     const isChooseTwo = q.question.includes("(Choose TWO)");
     const isMultipleAnswer = isChooseTwo || q.correct_answer.length > 1;
 
+    const confirmButtonHtml = examMode === 'instant' 
+        ? `<button onclick="confirmAnswer(${q.id})">Confirm Answer</button>`
+        : `<div class="confirm-button-container">
+               <button onclick="confirmAnswer(${q.id})">Confirm Answer</button>
+               <span class="confirmation-text" id="confirmationText${q.id}">Answer Confirmed</span>
+           </div>`;
+
     questionContainer.innerHTML = `
     <div class="question" id="question${q.id}">
         <h3>Question ${currentQuestionIndex + 1} of ${currentExam.questions.length}</h3>
@@ -170,12 +188,12 @@ function renderCurrentQuestion() {
         <div id="feedback${q.id}" class="feedback"></div>
         <div class="navigation-buttons" style="justify-content: space-between; align-items: center;">
             <button onclick="navigateQuestion(-1)">Previous</button>
-            <button onclick="confirmAnswer(${q.id})">Confirm Answer</button>
+            ${confirmButtonHtml}
             <button onclick="navigateQuestion(1)">Next</button>
         </div>
     </div>
     `;
-    currentQuestionConfirmed = false;
+
     updateNavigationButtons();
 }
 
@@ -187,22 +205,35 @@ function confirmAnswer(questionId) {
         return;
     }
     
-    const isCorrect = checkAnswer(questionId, selectedAnswers);
-    
     const feedbackElement = document.getElementById(`feedback${questionId}`);
-    if (isCorrect) {
-        feedbackElement.textContent = 'Correct!';
-        feedbackElement.className = 'feedback correct';
+    const confirmationText = document.getElementById(`confirmationText${questionId}`);
+    
+    if (examMode === 'instant') {
+        const isCorrect = checkAnswer(questionId, selectedAnswers);
+        if (isCorrect) {
+            feedbackElement.textContent = 'Correct!';
+            feedbackElement.className = 'feedback correct';
+        } else {
+            feedbackElement.textContent = 'Incorrect';
+            feedbackElement.className = 'feedback incorrect';
+        }
     } else {
-        feedbackElement.textContent = 'Incorrect';
-        feedbackElement.className = 'feedback incorrect';
+        // For real exam mode
+        feedbackElement.textContent = '';
+        feedbackElement.className = 'feedback';
+        
+        // Show the confirmation text only in real exam mode
+        confirmationText.classList.add('show');
+        setTimeout(() => {
+            confirmationText.classList.remove('show');
+        }, 2000); // Hide after 2 seconds
     }
 
     currentQuestionConfirmed = true;
     updateNavigationButtons();
 }
 
-function checkAnswer(questionId, selectedAnswerIndices, provideFeedback = false) {
+function checkAnswer(questionId, selectedAnswerIndices) {
     const question = currentExam.questions.find(q => q.id === questionId);
     if (!question) {
         console.error('Question not found');
@@ -216,19 +247,6 @@ function checkAnswer(questionId, selectedAnswerIndices, provideFeedback = false)
     const isCorrect = selectedAnswerIndices.length === correctAnswerIndices.length &&
         selectedAnswerIndices.every(index => correctAnswerIndices.includes(index)) &&
         correctAnswerIndices.every(index => selectedAnswerIndices.includes(index));
-
-    if (provideFeedback && feedbackSetting === 'immediate') {
-        const feedbackElement = document.getElementById(`feedback${questionId}`);
-        if (feedbackElement) {
-            if (isCorrect) {
-                feedbackElement.textContent = 'Correct!';
-                feedbackElement.className = 'feedback correct';
-            } else {
-                feedbackElement.textContent = 'Incorrect';
-                feedbackElement.className = 'feedback incorrect';
-            }
-        }
-    }
 
     return isCorrect;
 }
@@ -314,7 +332,14 @@ function formatExplanation(explanation) {
     formattedExplanation += '</ul>';
 
     if (reference) {
-        formattedExplanation += `<p><strong>${reference}</strong></p>`;
+        // Extract the URL from the reference line
+        const urlMatch = reference.match(/<(https?:\/\/[^>]+)>/);
+        if (urlMatch) {
+            const url = urlMatch[1];
+            formattedExplanation += `<p><strong>Reference: <a href="${url}" target="_blank">${url}</a></strong></p>`;
+        } else {
+            formattedExplanation += `<p><strong>${reference}</strong></p>`;
+        }
     }
 
     return formattedExplanation;
@@ -329,25 +354,25 @@ function navigateQuestion(direction) {
     const newIndex = currentQuestionIndex + direction;
     if (newIndex >= 0 && newIndex < currentExam.questions.length) {
         currentQuestionIndex = newIndex;
-        currentQuestionConfirmed = false;  // Reset for the new question
+        currentQuestionConfirmed = false;  
         renderCurrentQuestion();
-        updateNavigationButtons();
+        updateNavigationButtons(); 
     }
 }
 
 function updateNavigationButtons() {
-    const prevButton = document.querySelector('.navigation-buttons button:first-child');
-    const nextButton = document.querySelector('.navigation-buttons button:last-child');
-    const confirmButton = document.querySelector('.navigation-buttons button:nth-child(2)');
+    const prevButton = document.getElementById('prevButton');
+    const nextButton = document.getElementById('nextButton');
+    const confirmButton = document.querySelector('.confirm-button-container button') || document.querySelector('.navigation-buttons button:nth-child(2)');
     
-    prevButton.disabled = (currentQuestionIndex === 0) || !currentQuestionConfirmed;
-    nextButton.disabled = (currentQuestionIndex === currentExam.questions.length - 1) || !currentQuestionConfirmed;
-    confirmButton.disabled = currentQuestionConfirmed;
+    if (prevButton) prevButton.disabled = (currentQuestionIndex === 0) || !currentQuestionConfirmed;
+    if (nextButton) nextButton.disabled = (currentQuestionIndex === currentExam.questions.length - 1) || !currentQuestionConfirmed;
+    if (confirmButton) confirmButton.disabled = currentQuestionConfirmed;
 }
 
 function startTimer() {
     clearInterval(timer);
-    const examDuration = 90 * 60; // 90 minutes in seconds
+    const examDuration = 70 * 60; // 90 minutes in seconds
     const endTime = examStartTime + (examDuration * 1000);
     
     const timerDisplay = document.getElementById('timer');
@@ -376,8 +401,7 @@ function selectAnswer(questionId, answerIndex, isMultipleAnswer, isChooseTwo) {
 
     if (isMultipleAnswer) {
         if (isChooseTwo && userAnswers[questionId].length >= 2 && !userAnswers[questionId].includes(answerIndex)) {
-            // If already two answers are selected and trying to select a third, show a popup
-            showPopup('You can only select two answers for this question.');
+            showPopup('You can only Choose TWO answers for this question.');
             return;
         }
 
@@ -400,7 +424,12 @@ function selectAnswer(questionId, answerIndex, isMultipleAnswer, isChooseTwo) {
         });
     }
     currentQuestionConfirmed = false;
-    showExamScreen();
+    updateNavigationButtons();
+    
+    // Remove any existing feedback
+    const feedbackElement = document.getElementById(`feedback${questionId}`);
+    feedbackElement.textContent = '';
+    feedbackElement.className = 'feedback';
 }
 
 function submitExam() {
@@ -493,6 +522,10 @@ document.addEventListener('DOMContentLoaded', fetchExams);
     const connectionDistance = 150;
     let mouse = { x: null, y: null, radius: 150 };
 
+    function isMobile() {
+        return ('ontouchstart' in window || navigator.maxTouchPoints > 0) && window.innerWidth <= 1024;
+    }
+
     function resizeCanvas() {
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
@@ -500,8 +533,8 @@ document.addEventListener('DOMContentLoaded', fetchExams);
 
     function getParticleColor() {
         return document.documentElement.classList.contains('dark') 
-            ? 'rgba(173, 216, 230, 0.7)' 
-            : 'rgba(139, 169, 179, 0.7)'; 
+            ? 'rgba(173, 216, 230, 0.2)' 
+            : 'rgba(139, 169, 179, 0.2)'; 
     }
 
     class Particle {
@@ -509,8 +542,8 @@ document.addEventListener('DOMContentLoaded', fetchExams);
             this.x = Math.random() * canvas.width;
             this.y = Math.random() * canvas.height;
             this.size = Math.random() * 3 + 1;
-            this.speedX = (Math.random() - 0.5) * 0.5;
-            this.speedY = (Math.random() - 0.5) * 0.5;
+            this.speedX = (Math.random() - 0.5) * 0.3; 
+            this.speedY = (Math.random() - 0.5) * 0.3; 
             this.color = getParticleColor();
         }
 
@@ -518,7 +551,6 @@ document.addEventListener('DOMContentLoaded', fetchExams);
             this.x += this.speedX;
             this.y += this.speedY;
 
-            // Interaction with mouse
             if (mouse.x != null && mouse.y != null) {
                 let dx = mouse.x - this.x;
                 let dy = mouse.y - this.y;
@@ -530,7 +562,6 @@ document.addEventListener('DOMContentLoaded', fetchExams);
                 }
             }
 
-            // Wrap around edges
             if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
             if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
         }
@@ -552,6 +583,12 @@ document.addEventListener('DOMContentLoaded', fetchExams);
 
     function animateParticles() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        if (isMobile()) {
+            canvas.classList.add('mobile-blur');
+        } else {
+            canvas.classList.remove('mobile-blur');
+        }
 
         for (let i = 0; i < particles.length; i++) {
             particles[i].update();
@@ -589,16 +626,27 @@ document.addEventListener('DOMContentLoaded', fetchExams);
     window.addEventListener('resize', function() {
         resizeCanvas();
         createParticles();
+        if (isMobile()) {
+            canvas.classList.add('mobile-blur');
+        } else {
+            canvas.classList.remove('mobile-blur');
+        }
     });
 
     document.querySelector('.theme-toggle').addEventListener('click', function() {
         particles.forEach(p => p.color = getParticleColor());
     });
 
+    // Initialize
     resizeCanvas();
     createParticles();
     animateParticles();
+
+    // Expose isMobile to global scope
+    window.isMobile = isMobile;
 })();
+
+
 
 // Expose necessary functions to global scope
 window.startExam = startExam;
