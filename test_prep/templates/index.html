@@ -4,7 +4,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AWS Cloud Practitioner Exam Prep</title>
+    <title>AWS Cloud Practitioner Exam Prep | Free Practice Tests</title>
+    <meta name="description" content="Free AWS Cloud Practitioner (CLF-C02) Exam Prep with practice exams and instant feedback. Prepare for your certification with our comprehensive question dumps.">
+    <meta name="keywords" content="AWS, Cloud Practitioner, CLF-C02, Exam Prep, Practice Test, Certification">
+    <link rel="canonical" href="https://www.cloudpractitioner.pro{{ request.path }}">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="apple-touch-icon" sizes="180x180" href="{% static 'images/apple-touch-icon.png' %}">
     <link rel="icon" type="image/png" sizes="32x32" href="{% static 'images/favicon-32x32.png' %}">
@@ -13,52 +16,67 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"></script>
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
     <script src="{% static 'js/script.js' %}" defer></script>
+    <meta property="og:title" content="AWS Cloud Practitioner Exam Prep">
+    <meta property="og:description" content="Free AWS Cloud Practitioner (CLF-C02) Exam Prep with practice exams and instant feedback.">
+    <meta property="og:image" content="https://www.cloudpractitioner.pro/static/images/og-image.jpg">
+    <meta property="og:url" content="https://www.cloudpractitioner.pro">
+    
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "AWS Cloud Practitioner Exam Prep",
+      "url": "https://www.cloudpractitioner.pro"
+    }
+    </script>
 </head>
 <body>
     <canvas id="background-canvas"></canvas>
     
     <header>
         <div class="container">
-            <h1>AWS Cloud Practitioner (CLF-C02) Prep Exams</h1>
+            <h1>AWS Cloud Practitioner (CLF-C02) Exam Prep</h1>
         </div>
-        <button class="theme-toggle" onclick="toggleTheme()">🌓</button>
+        <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark mode">🌓</button>
     </header>
-    <div class="container">
+    <main class="container" >
         <div id="landing">
-            <div class="card">
-                
-                <p>Practice with the following <strong>23</strong> exam question dumps.</p>
-
-            </div>
+            <section class="card">
+                <p style="margin-bottom: 30px;"><strong>AWS Certified Cloud Practitioner</strong> is the basic foundational exam covering AWS Cloud concepts and services.</p>
+                <p style="margin-bottom: 30px;">Each practice exam has <strong>50 questions</strong> and is allotted <strong>70 minutes</strong>.</p>
+                <p style="margin-bottom: 30px;">Practice with the following <strong>23</strong> exam question dumps.</p>
+            </section>
             
-            <h2 style="margin-top:20px;  backdrop-filter: blur(2px);">Select Exam: </h2>
+            <h2>Select Exam: </h2>
             <div class="custom-dropdown">
-
-                <select id="examSelector">
+                <select id="examSelector" aria-label="Select exam">
                     <!-- Exam options will be dynamically added here -->
                 </select>
             </div>
 
+            <div class="exam-buttons">
+                <button onclick="startExam('real')">Start Real Setting Exam</button>
+                <button onclick="startExam('instant')">Start Instant Feedback Exam</button>
+            </div>
 
-            <button onclick="startExam()">Start</button>
+            <button id="toggleCarousel" class="toggle-button" style="margin-top: 5%;">Key Concepts 📒</button>
         </div>
 
         <div id="exam" style="display: none;">
             <div class="exam-layout">
-                <div class="question-container">
-                    <div id="timer">Time left: 90:00</div>
-                    <div id="currentQuestion"></div>
+                <div class="exam-header">
+                    <button onclick="returnToMenu()" class="header-button">Return to Main Menu</button>
+                    <div id="timer">Time left: 70:00</div>
+                    <button onclick="submitExam()" class="header-button">Submit Exam</button>
                 </div>
-                <div class="side-navigation">
-                    <button onclick="submitExam()">Submit Exam</button>
-                    <button onclick="returnToMenu()">Return to Main Menu</button>
-                    
+                <div class="question-container">
+                    <div id="currentQuestion"></div>
                 </div>
             </div>
         </div>
 
         <div id="results" style="display: none;">
-            <h2 style="font-size: 2.5rem;">Exam Results</h2>
+            <h2>Exam Results</h2>
             <div id="score"></div>
             
             <div class="filter-buttons">
@@ -68,12 +86,337 @@
                 <button onclick="returnToMenu()">Return to Main Menu</button>
             </div>
             <div id="reviewQuestions"></div>
-
         </div>
+    </main>
 
+
+    <div class="study-guide-container">
+        <div class="carousel-wrapper" style="display: none;">
+            <div class="carousel">
+                <div class="flashcard-container">
+                    <div class="flashcard">
+                        <div class="flashcard-inner">
+                            <div class="flashcard-front">
+                                <h3>1. Identity and Access Management (IAM)</h3>
+                            </div>
+                            <div class="flashcard-back">
+                                <ul>
+                                    <li><strong>Users:</strong> Mapped to physical users, has password for AWS Console access</li>
+                                    <li><strong>Groups:</strong> Contains users only</li>
+                                    <li><strong>Policies:</strong> JSON documents outlining permissions</li>
+                                    <li><strong>Roles:</strong> For EC2 instances or AWS services</li>
+                                    <li><strong>Security:</strong> MFA + Password Policy</li>
+                                    <li><strong>AWS CLI:</strong> Manage AWS services using command-line</li>
+                                    <li><strong>AWS SDK:</strong> Manage AWS services using programming languages</li>
+                                    <li><strong>Access Keys:</strong> Access AWS using CLI or SDK</li>
+                                    <li><strong>Audit:</strong> IAM Credential Reports & IAM Access Advisor</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flashcard">
+                        <div class="flashcard-inner">
+                            <div class="flashcard-front">
+                                <h3>2. Elastic Compute Cloud (EC2)</h3>
+                            </div>
+                            <div class="flashcard-back">
+                                <ul>
+                                    <li><strong>EC2 Instance:</strong> AMI (OS) + Instance Size (CPU + RAM) + Storage + Security Groups + EC2 User Data</li>
+                                    <li><strong>Security Groups:</strong> Firewall attached to EC2 instances</li>
+                                    <li><strong>EC2 User Data:</strong> Script launched at the first start of an instance</li>
+                                    <li><strong>SSH:</strong> Start a terminal into EC2 Instances (port 22)</li>
+                                    <li><strong>EC2 Instance Role:</strong> Link to IAM roles</li>
+                                    <li><strong>Purchasing Options:</strong> On-Demand, Spot, Reserved, Dedicated Host, Dedicated Instance</li>
+                                    <li><strong>Storage:</strong> EBS, EFS, FSx, Instance Store</li>
+                                    <li><strong>AMI:</strong> Pre-configured EC2 instances for faster setup</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flashcard">
+                        <div class="flashcard-inner">
+                            <div class="flashcard-front">
+                                <h3>3. High Availability & Scalability</h3>
+                            </div>
+                            <div class="flashcard-back">
+                                <ul>
+                                    <li><strong>Elastic Load Balancing (ELB):</strong> Distribute traffic across backend EC2 instances</li>
+                                    <li><strong>Auto Scaling Groups (ASG):</strong> Implement Elasticity for applications across multiple AZ</li>
+                                    <li><strong>Vertical Scaling:</strong> Increase instance size</li>
+                                    <li><strong>Horizontal Scaling:</strong> Increase number of instances</li>
+                                    <li><strong>High Availability:</strong> Run instances across multiple AZ</li>
+                                    <li><strong>ELB Types:</strong> Application LB (HTTP – L7), Network LB (TCP – L4), Classic LB (old)</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flashcard">
+                        <div class="flashcard-inner">
+                            <div class="flashcard-front">
+                                <h3>4. Amazon S3 (Simple Storage Service)</h3>
+                            </div>
+                            <div class="flashcard-back">
+                                <ul>
+                                    <li><strong>Buckets vs Objects:</strong> Global unique name, tied to a region</li>
+                                    <li><strong>S3 Security:</strong> IAM policy, S3 Bucket Policy (public access), S3 Encryption</li>
+                                    <li><strong>S3 Websites:</strong> Host static websites</li>
+                                    <li><strong>Versioning:</strong> Multiple versions for files, prevent accidental deletes</li>
+                                    <li><strong>Access Logs:</strong> Log requests within S3 bucket</li>
+                                    <li><strong>Replication:</strong> Same-region or cross-region, requires versioning</li>
+                                    <li><strong>Storage Classes:</strong> Standard, IA, 1Z-IA, Intelligent, Glacier, Glacier Deep Archive</li>
+                                    <li><strong>Lifecycle Rules:</strong> Transition objects between classes</li>
+                                    <li><strong>Glacier Vault Lock / S3 Object Lock:</strong> WORM (Write Once Read Many)</li>
+                                    <li><strong>Snow Family:</strong> Import data onto S3 through physical devices, edge computing</li>
+                                    <li><strong>Storage Gateway:</strong> Hybrid solution to extend on-premises storage to S3</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flashcard">
+                        <div class="flashcard-inner">
+                            <div class="flashcard-front">
+                                <h3>5. Databases & Analytics</h3>
+                            </div>
+                            <div class="flashcard-back">
+                                <ul>
+                                    <li><strong>Relational Databases (OLTP):</strong> RDS & Aurora (SQL)</li>
+                                    <li><strong>In-memory Database:</strong> ElastiCache</li>
+                                    <li><strong>Key/Value Database:</strong> DynamoDB (serverless) & DAX (cache for DynamoDB)</li>
+                                    <li><strong>Data Warehouse (OLAP):</strong> Redshift (SQL)</li>
+                                    <li><strong>Hadoop Cluster:</strong> EMR</li>
+                                    <li><strong>Athena:</strong> Query data on Amazon S3 (serverless & SQL)</li>
+                                    <li><strong>QuickSight:</strong> Dashboards on your data (serverless)</li>
+                                    <li><strong>DocumentDB:</strong> "Aurora for MongoDB" (JSON – NoSQL database)</li>
+                                    <li><strong>QLDB:</strong> Financial Transactions Ledger (immutable journal, cryptographically verifiable)</li>
+                                    <li><strong>Managed Blockchain:</strong> Managed Hyperledger Fabric & Ethereum blockchains</li>
+                                    <li><strong>Glue:</strong> Managed ETL and Data Catalog service</li>
+                                    <li><strong>Database Migration:</strong> DMS</li>
+                                    <li><strong>Neptune:</strong> Graph database</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flashcard">
+                        <div class="flashcard-inner">
+                            <div class="flashcard-front">
+                                <h3>6. Serverless</h3>
+                            </div>
+                            <div class="flashcard-back">
+                                <ul>
+                                    <li><strong>Lambda:</strong> Function as a Service, seamless scaling, reactive</li>
+                                    <li><strong>API Gateway:</strong> Expose Lambda functions as HTTP API</li>
+                                    <li><strong>Docker:</strong> Container technology to run applications</li>
+                                    <li><strong>ECS:</strong> Run Docker containers on EC2 instances</li>
+                                    <li><strong>Fargate:</strong> Run Docker containers without provisioning infrastructure (serverless)</li>
+                                    <li><strong>ECR:</strong> Private Docker Images Repository</li>
+                                    <li><strong>Batch:</strong> Run batch jobs on AWS across managed EC2 instances</li>
+                                    <li><strong>Lightsail:</strong> Predictable & low pricing for simple application & DB stacks</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flashcard">
+                        <div class="flashcard-inner">
+                            <div class="flashcard-front">
+                                <h3>7. Deployment & Developer Tools</h3>
+                            </div>
+                            <div class="flashcard-back">
+                                <ul>
+                                    <li><strong>CloudFormation:</strong> Infrastructure as Code for AWS resources</li>
+                                    <li><strong>Beanstalk:</strong> Platform as a Service (PaaS) for certain languages or Docker</li>
+                                    <li><strong>CodeDeploy:</strong> Deploy & upgrade applications on servers</li>
+                                    <li><strong>Systems Manager:</strong> Patch, configure, run commands at scale</li>
+                                    <li><strong>OpsWorks:</strong> Managed Chef and Puppet in AWS</li>
+                                    <li><strong>CodeCommit:</strong> Private git repository</li>
+                                    <li><strong>CodeBuild:</strong> Build & test code</li>
+                                    <li><strong>CodePipeline:</strong> Orchestrate from code to build to deploy</li>
+                                    <li><strong>CodeArtifact:</strong> Store software packages / dependencies</li>
+                                    <li><strong>CodeStar:</strong> Unified view for CICD and code</li>
+                                    <li><strong>Cloud9:</strong> Cloud IDE with collaboration</li>
+                                    <li><strong>AWS CDK:</strong> Define cloud infrastructure using programming languages</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flashcard">
+                        <div class="flashcard-inner">
+                            <div class="flashcard-front">
+                                <h3>8. Global Applications</h3>
+                            </div>
+                            <div class="flashcard-back">
+                                <ul>
+                                    <li><strong>Route 53:</strong> Global DNS service</li>
+                                    <li><strong>CloudFront:</strong> Content Delivery Network (CDN)</li>
+                                    <li><strong>S3 Transfer Acceleration:</strong> Fast, global file transfers</li>
+                                    <li><strong>AWS Global Accelerator:</strong> Improve global application performance</li>
+                                    <li><strong>Outposts:</strong> Extend AWS to on-premises data centers</li>
+                                    <li><strong>WaveLength:</strong> Edge computing for 5G networks</li>
+                                    <li><strong>Local Zones:</strong> Bring AWS resources closer to users</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flashcard">
+                        <div class="flashcard-inner">
+                            <div class="flashcard-front">
+                                <h3>9. Integration & Messaging</h3>
+                            </div>
+                            <div class="flashcard-back">
+                                <ul>
+                                    <li><strong>SQS:</strong> Queue service with multiple producers/consumers</li>
+                                    <li><strong>SNS:</strong> Notification service with multiple subscribers</li>
+                                    <li><strong>Kinesis:</strong> Real-time data streaming, persistence, and analysis</li>
+                                    <li><strong>Amazon MQ:</strong> Managed Apache ActiveMQ</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flashcard">
+                        <div class="flashcard-inner">
+                            <div class="flashcard-front">
+                                <h3>10. Cloud Monitoring</h3>
+                            </div>
+                            <div class="flashcard-back">
+                                <ul>
+                                    <li><strong>CloudWatch:</strong> Metrics, alarms, logs, and events</li>
+                                    <li><strong>CloudTrail:</strong> Audit API calls within AWS account</li>
+                                    <li><strong>CloudTrail Insights:</strong> Automated analysis of CloudTrail Events</li>
+                                    <li><strong>X-Ray:</strong> Trace requests through distributed applications</li>
+                                    <li><strong>Service Health Dashboard:</strong> AWS service status across regions</li>
+                                    <li><strong>Personal Health Dashboard:</strong> Personalized AWS health events</li>
+                                    <li><strong>Amazon CodeGuru:</strong> Automated code reviews and application performance recommendations</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flashcard">
+                        <div class="flashcard-inner">
+                            <div class="flashcard-front">
+                                <h3>11. VPC & Networking</h3>
+                            </div>
+                            <div class="flashcard-back">
+                                <ul>
+                                    <li><strong>VPC:</strong> Virtual Private Cloud</li>
+                                    <li><strong>Subnets:</strong> Tied to AZ, network partition of VPC</li>
+                                    <li><strong>Internet Gateway:</strong> Provide internet access at VPC level</li>
+                                    <li><strong>NAT Gateway / Instances:</strong> Internet access for private subnets</li>
+                                    <li><strong>NACL:</strong> Stateless subnet rules for inbound/outbound</li>
+                                    <li><strong>Security Groups:</strong> Stateful, operate at EC2 instance or ENI level</li>
+                                    <li><strong>VPC Peering:</strong> Connect VPCs with non-overlapping IP ranges</li>
+                                    <li><strong>VPC Endpoints:</strong> Private access to AWS Services within VPC</li>
+                                    <li><strong>VPC Flow Logs:</strong> Network traffic logs</li>
+                                    <li><strong>Site to Site VPN:</strong> Connect on-premises to AWS</li>
+                                    <li><strong>Direct Connect:</strong> Private connection to AWS</li>
+                                    <li><strong>Transit Gateway:</strong> Connect thousands of VPCs and on-premises networks</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flashcard">
+                        <div class="flashcard-inner">
+                            <div class="flashcard-front">
+                                <h3>12. Security & Compliance</h3>
+                            </div>
+                            <div class="flashcard-back">
+                                <ul>
+                                    <li><strong>Shared Responsibility Model</strong></li>
+                                    <li><strong>Shield:</strong> DDoS Protection</li>
+                                    <li><strong>WAF:</strong> Web Application Firewall</li>
+                                    <li><strong>KMS & CloudHSM:</strong> Encryption key management</li>
+                                    <li><strong>Certificate Manager:</strong> SSL/TLS Certificates</li>
+                                    <li><strong>Artifact:</strong> Access to compliance reports</li>
+                                    <li><strong>GuardDuty:</strong> Malicious behavior detection</li>
+                                    <li><strong>Inspector:</strong> Vulnerability assessment for EC2</li>
+                                    <li><strong>Config:</strong> Resource configuration tracking</li>
+                                    <li><strong>Macie:</strong> Sensitive data discovery in S3</li>
+                                    <li><strong>Security Hub:</strong> Centralized security management</li>
+                                    <li><strong>Detective:</strong> Root cause analysis for security issues</li>
+                                    <li><strong>AWS Abuse:</strong> Report abusive or illegal resource usage</li>
+                                    <li><strong>Root user privileges:</strong> Account management, billing changes</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flashcard">
+                        <div class="flashcard-inner">
+                            <div class="flashcard-front">
+                                <h3>13. Machine Learning</h3>
+                            </div>
+                            <div class="flashcard-back">
+                                <ul>
+                                    <li><strong>Rekognition:</strong> Image and video analysis</li>
+                                    <li><strong>Transcribe:</strong> Speech to text</li>
+                                    <li><strong>Polly:</strong> Text to speech</li>
+                                    <li><strong>Translate:</strong> Language translation</li>
+                                    <li><strong>Lex:</strong> Conversational interfaces</li>
+                                    <li><strong>Connect:</strong> Cloud contact center</li>
+                                    <li><strong>Comprehend:</strong> Natural language processing</li>
+                                    <li><strong>SageMaker:</strong> End-to-end machine learning platform</li>
+                                    <li><strong>Forecast:</strong> Time-series forecasting</li>
+                                    <li><strong>Kendra:</strong> ML-powered search engine</li>
+                                    <li><strong>Personalize:</strong> Real-time recommendations</li>
+                                    <li><strong>Textract:</strong> Extract text and data from documents</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flashcard">
+                        <div class="flashcard-inner">
+                            <div class="flashcard-front">
+                                <h3>14. Account Management & Billing</h3>
+                            </div>
+                            <div class="flashcard-back">
+                                <ul>
+                                    <li><strong>Organizations:</strong> Multi-account management</li>
+                                    <li><strong>Control Tower:</strong> Set up and govern multi-account environments</li>
+                                    <li><strong>Systems Manager:</strong> Operational insights across accounts</li>
+                                    <li><strong>Trusted Advisor:</strong> Best practice recommendations</li>
+                                    <li><strong>Cost management tools:</strong> Compute Optimizer, Pricing Calculator, Cost Explorer, Budgets</li>
+                                    <li><strong>Savings Plans:</strong> Flexible pricing model for compute savings</li>
+                                    <li><strong>Cost Anomaly Detection:</strong> Identify unusual spending patterns</li>
+                                    <li><strong>Service Quotas:</strong> Manage AWS service limits</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flashcard">
+                        <div class="flashcard-inner">
+                            <div class="flashcard-front">
+                                <h3>15. Identity Federation</h3>
+                            </div>
+                            <div class="flashcard-back">
+                                <ul>
+                                    <li><strong>IAM:</strong> Identity and Access Management within AWS</li>
+                                    <li><strong>Organizations:</strong> Manage multiple AWS accounts</li>
+                                    <li><strong>Security Token Service (STS):</strong> Temporary, limited-privilege credentials</li>
+                                    <li><strong>Cognito:</strong> User management for web/mobile apps</li>
+                                    <li><strong>Directory Services:</strong> Integrate with Microsoft Active Directory</li>
+                                    <li><strong>IAM Identity Center:</strong> Single sign-on for multiple AWS accounts and applications</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flashcard">
+                        <div class="flashcard-inner">
+                            <div class="flashcard-front">
+                                <h3>16. Well-Architected Framework</h3>
+                            </div>
+                            <div class="flashcard-back">
+                                <ul>
+                                    <li><strong>Operational Excellence:</strong> Run and monitor systems</li>
+                                    <li><strong>Security:</strong> Protect information and systems</li>
+                                    <li><strong>Reliability:</strong> Prevent and quickly recover from failures</li>
+                                    <li><strong>Performance Efficiency:</strong> Use computing resources efficiently</li>
+                                    <li><strong>Cost Optimization:</strong> Avoid unnecessary costs</li>
+                                    <li><strong>Sustainability:</strong> Minimize environmental impacts</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-    
-
 
     <div id="customPopup" class="popup" style="display: none;">
         <div class="popup-content">
@@ -83,12 +426,11 @@
     </div>
     <footer>
         <div class="footer-credits">
-            <p>Made with ☕ by <a href="https://github.com/ancient-cthulhu" target="_blank" >ancient-cthulhu</a></p>
-            <p>LinkedIn 🌎 <a href="https://www.linkedin.com/in/dgmarquez/" target="_blank" >Daniel Marquez</a></p>
+            <p>Made with ☕ by <a href="https://github.com/ancient-cthulhu" target="_blank" rel="noopener">ancient-cthulhu</a></p>
+            <p>LinkedIn 🌎 <a href="https://www.linkedin.com/in/dgmarquez/" target="_blank" rel="noopener">Daniel Marquez</a></p>
         </div>
     </footer>
     <div id="blur-overlay"></div>
- 
-    
+
 </body>
 </html>
