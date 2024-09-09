@@ -5,8 +5,9 @@ An interactive web application to help users prepare for the AWS Certified Cloud
 ## Features
 
 - 23 practice exam dumps
-- Timed exams (90 minutes)
+- Timed exams (70 minutes)
 - Immediate feedback on answers
+- Real Exam setting
 - Detailed results review
 - Dark/Light theme toggle
 - Responsive design for various devices
