@@ -9,8 +9,14 @@ let examStartTime = null;
 
 function toggleTheme() {
     document.documentElement.classList.toggle('dark');
+    
+    // Update study guide content if it's visible
+    const studyGuideContent = document.getElementById('studyGuideSummary');
+    if (studyGuideContent && studyGuideContent.style.display !== 'none') {
+        studyGuideContent.style.backgroundColor = getComputedStyle(document.documentElement).getPropertyValue('--background-color');
+        studyGuideContent.style.color = getComputedStyle(document.documentElement).getPropertyValue('--text-color');
+    }
 }
-
 
 function fetchExams() {
     console.log('Fetching exams...');
@@ -42,7 +48,7 @@ function startExam(mode) {
         return;
     }
     
-    examMode = mode; // Store the exam mode
+    examMode = mode;
     
     const examUrl = `/api/exams/${encodeURIComponent(selectedExam)}`;
     
@@ -63,13 +69,14 @@ function startExam(mode) {
             currentExam = data;
             console.log("Loaded questions:", currentExam.questions.length);
             currentQuestionIndex = 0;
-            userAnswers = {};  // Clear existing answers
+            userAnswers = {};
             if (currentExam.questions.length !== 50) {
                 console.warn(`Expected 50 questions, but loaded ${currentExam.questions.length}`);
             }
             examStartTime = Date.now();
             startTimer();
             showExamScreen();
+            hideCarousel(); // Add this line to hide the carousel
         })
         .catch(error => {
             console.error('Error:', error);
@@ -138,10 +145,15 @@ function showExamScreen() {
 }
 
 function returnToMenu() {
-    document.getElementById('landing').style.display = 'flex';
-    document.getElementById('exam').style.display = 'none';
-    document.getElementById('results').style.display = 'none';
-    document.getElementById('blur-overlay').style.display = 'none';
+    const landingElement = document.getElementById('landing');
+    const examElement = document.getElementById('exam');
+    const resultsElement = document.getElementById('results');
+    const blurOverlay = document.getElementById('blur-overlay');
+
+    if (landingElement) landingElement.style.display = 'flex';
+    if (examElement) examElement.style.display = 'none';
+    if (resultsElement) resultsElement.style.display = 'none';
+    if (blurOverlay) blurOverlay.style.display = 'none';
 
     resetExam();
 }
@@ -178,7 +190,7 @@ function renderCurrentQuestion() {
     questionContainer.innerHTML = `
     <div class="question" id="question${q.id}">
         <h3>Question ${currentQuestionIndex + 1} of ${currentExam.questions.length}</h3>
-        <p style="overflow-wrap: break-word;">${q.question || 'Question text not available'}</p>
+        <p style="overflow-wrap: break-word; " id="questionText">${q.question || 'Question text not available'}</p>
         <div class="options">
             ${q.options ? q.options.map((option, i) => `
                 <button class="option-button ${userAnswers[q.id]?.includes(i) ? 'selected' : ''}" 
@@ -196,6 +208,8 @@ function renderCurrentQuestion() {
 
     updateNavigationButtons();
 }
+
+
 
 function confirmAnswer(questionId) {
     const selectedAnswers = userAnswers[questionId] || [];
@@ -458,19 +472,6 @@ function filterQuestions(filter) {
     });
 }
 
-function returnToMenu() {
-    const landingElement = document.getElementById('landing');
-    const examElement = document.getElementById('exam');
-    const resultsElement = document.getElementById('results');
-    const blurOverlay = document.getElementById('blur-overlay');
-
-    if (landingElement) landingElement.style.display = 'flex';
-    if (examElement) examElement.style.display = 'none';
-    if (resultsElement) resultsElement.style.display = 'none';
-    if (blurOverlay) blurOverlay.style.display = 'none';
-
-    resetExam();
-}
 
 function resetExam() {
     clearInterval(timer);
@@ -637,14 +638,143 @@ document.addEventListener('DOMContentLoaded', fetchExams);
         particles.forEach(p => p.color = getParticleColor());
     });
 
-    // Initialize
+   
     resizeCanvas();
     createParticles();
     animateParticles();
 
-    // Expose isMobile to global scope
+   
     window.isMobile = isMobile;
 })();
+
+
+document.addEventListener('DOMContentLoaded', (event) => {
+
+    const toggleButton = document.getElementById('toggleCarousel');
+    const carouselWrapper = document.querySelector('.carousel-wrapper');
+    const carousel = document.querySelector('.carousel');
+    const flashcards = document.querySelectorAll('.flashcard');
+    let isDown = false;
+    let startX;
+    let scrollLeft;
+    let velocity = 0;
+    let rafId;
+    let touchStartX;
+    let isThrottled = false;
+    const throttleDelay = 100; 
+
+    function handleFlashcardScroll(e) {
+        e.stopPropagation();
+    }
+
+    flashcards.forEach(flashcard => {
+        const frontContent = flashcard.querySelector('.flashcard-front');
+        const backContent = flashcard.querySelector('.flashcard-back');
+
+        frontContent.addEventListener('wheel', handleFlashcardScroll, { passive: true });
+        backContent.addEventListener('wheel', handleFlashcardScroll, { passive: true });
+
+        frontContent.addEventListener('touchmove', handleFlashcardScroll, { passive: true });
+        backContent.addEventListener('touchmove', handleFlashcardScroll, { passive: true });
+    });
+
+    carousel.addEventListener('wheel', (e) => {
+        if (isThrottled) return;
+        isThrottled = true;
+        setTimeout(() => {
+            isThrottled = false;
+        }, throttleDelay);
+        carousel.scrollLeft += e.deltaY;
+    }, { passive: true });
+
+    carousel.addEventListener('mousedown', (e) => {
+        isDown = true;
+        carousel.style.cursor = 'grabbing';
+        startX = e.pageX - carousel.offsetLeft;
+        scrollLeft = carousel.scrollLeft;
+        cancelAnimationFrame(rafId); 
+    });
+
+    carousel.addEventListener('mouseleave', () => {
+        isDown = false;
+        carousel.style.cursor = 'grab';
+    });
+
+    carousel.addEventListener('mouseup', () => {
+        isDown = false;
+        carousel.style.cursor = 'grab';
+
+      
+        const smoothScroll = () => {
+            if (Math.abs(velocity) > 0.1) {
+                carousel.scrollLeft += velocity;
+                velocity *= 0.95;  
+                rafId = requestAnimationFrame(smoothScroll);
+            } else {
+                cancelAnimationFrame(rafId);
+            }
+        };
+
+        velocity = (carousel.scrollLeft - scrollLeft) * 0.1;
+        smoothScroll();
+    });
+
+    carousel.addEventListener('mousemove', (e) => {
+        if (!isDown) return;
+        e.preventDefault();
+        const x = e.pageX - carousel.offsetLeft;
+        const walk = (x - startX) * 2; 
+        carousel.scrollLeft = scrollLeft - walk;
+    });
+
+    carousel.addEventListener('touchstart', (e) => {
+        touchStartX = e.touches[0].clientX;
+    }, { passive: true });
+
+    carousel.addEventListener('touchmove', (e) => {
+        if (!touchStartX) return;
+        const touchEndX = e.touches[0].clientX;
+        const diff = (touchStartX - touchEndX) * 0.1;  
+        carousel.scrollLeft += diff;
+        touchStartX = touchEndX;
+    }, { passive: true });
+
+    carousel.addEventListener('touchend', () => {
+        touchStartX = null;
+    }, { passive: true });
+
+    function scrollToCarousel() {
+        carouselWrapper.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function scrollToTop() {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+
+    carouselWrapper.style.display = 'none';
+    
+    toggleButton.addEventListener('click', () => {
+        if (carouselWrapper.style.display === 'none') {
+            carouselWrapper.style.display = 'block';
+            toggleButton.textContent = 'Key Concepts 📒';
+            scrollToCarousel();
+        } else {
+            carouselWrapper.style.display = 'none';
+            toggleButton.textContent = 'Key Concepts 📒';
+            scrollToTop();
+        }
+    });
+});
+
+function hideCarousel() {
+    const carouselWrapper = document.querySelector('.carousel-wrapper');
+    if (carouselWrapper) {
+        carouselWrapper.style.display = 'none';
+    }
+}
+
+
 
 
 
